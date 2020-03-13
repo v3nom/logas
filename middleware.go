@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"cloud.google.com/go/logging"
 	"github.com/v3nom/pipes"
 )
 
@@ -13,6 +14,11 @@ func Middleware(ctx context.Context, w http.ResponseWriter, r *http.Request, nex
 	span, trace := getTraceContext(r)
 	ctx = context.WithValue(ctx, SpanKey, span)
 	ctx = context.WithValue(ctx, TraceKey, trace)
+	if ctx.Value(LoggingClient) != nil {
+		loggingClient := ctx.Value(LoggingClient).(*logging.Client)
+		appLog := loggingClient.Logger("app")
+		ctx = context.WithValue(ctx, DefaultLogger, appLog)
+	}
 	next(ctx)
 }
 

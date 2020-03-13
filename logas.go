@@ -8,76 +8,77 @@ import (
 
 	"cloud.google.com/go/compute/metadata"
 	"cloud.google.com/go/logging"
+	"github.com/v3nom/pipes"
 )
 
-// ContextKey logas context key
-type ContextKey string
+// LoggingClient logging client
+var LoggingClient pipes.ContextKey = "logas client ctx"
 
-// LoggerKey context key for logger
-var LoggerKey ContextKey = "logas logger ctx"
+// DefaultLogger context key for logger
+var DefaultLogger pipes.ContextKey = "logas logger ctx"
 
 // SpanKey context key for span ID
-var SpanKey ContextKey = "logas span ctx"
+var SpanKey pipes.ContextKey = "logas span ctx"
 
 // TraceKey context key for trace ID
-var TraceKey ContextKey = "logas trace ctx"
+var TraceKey pipes.ContextKey = "logas trace ctx"
 
 // Debugf logs a message at DEBUG level
 func Debugf(ctx context.Context, format string, args ...interface{}) {
-	if ctx.Value(LoggerKey) == nil {
+	if ctx.Value(DefaultLogger) == nil {
 		log.Printf("Debug. "+format, args...)
 		return
 	}
 
-	logger := ctx.Value(LoggerKey).(*logging.Logger)
+	logger := ctx.Value(DefaultLogger).(*logging.Logger)
 	entry := createCommonEntry(ctx, logging.Debug, format, args...)
 	logger.Log(*entry)
 }
 
 // Infof logs a message at INFO level
 func Infof(ctx context.Context, format string, args ...interface{}) {
-	if ctx.Value(LoggerKey) == nil {
+	if ctx.Value(DefaultLogger) == nil {
 		log.Printf("Info. "+format, args...)
 		return
 	}
 
-	logger := ctx.Value(LoggerKey).(*logging.Logger)
+	logger := ctx.Value(DefaultLogger).(*logging.Logger)
 	entry := createCommonEntry(ctx, logging.Info, format, args...)
 	logger.Log(*entry)
 }
 
 // Warningf logs a message at WARNING level
 func Warningf(ctx context.Context, format string, args ...interface{}) {
-	if ctx.Value(LoggerKey) == nil {
+	if ctx.Value(DefaultLogger) == nil {
 		log.Printf("Warning. "+format, args...)
 		return
 	}
 
-	logger := ctx.Value(LoggerKey).(*logging.Logger)
+	logger := ctx.Value(DefaultLogger).(*logging.Logger)
 	entry := createCommonEntry(ctx, logging.Warning, format, args...)
 	logger.Log(*entry)
 }
 
 // Errorf logs a message at ERROR level
 func Errorf(ctx context.Context, format string, args ...interface{}) {
-	if ctx.Value(LoggerKey) == nil {
+	if ctx.Value(DefaultLogger) == nil {
 		log.Printf("Error. "+format, args...)
 		return
 	}
 
-	logger := ctx.Value(LoggerKey).(*logging.Logger)
+	logger := ctx.Value(DefaultLogger).(*logging.Logger)
 	entry := createCommonEntry(ctx, logging.Error, format, args...)
 	logger.Log(*entry)
 }
 
 // Criticalf logs a message at CRITICAL level
 func Criticalf(ctx context.Context, format string, args ...interface{}) {
-	if ctx.Value(LoggerKey) == nil {
+	if ctx.Value(DefaultLogger) == nil {
 		log.Printf("Critical. "+format, args...)
 		return
 	}
 
-	logger := ctx.Value(LoggerKey).(*logging.Logger)
+	logger := ctx.Value(DefaultLogger).(*logging.Logger)
 	entry := createCommonEntry(ctx, logging.Critical, format, args...)
 	logger.Log(*entry)
 }
